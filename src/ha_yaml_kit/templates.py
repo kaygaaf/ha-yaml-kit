@@ -32,17 +32,17 @@ def motion_light(
         {
             "id": _auto_id(automation_id, f"{_object(light)}_motion"),
             "alias": _clean_alias(alias, f"{_phrase(light)} motion light"),
-            "trigger": [
+            "triggers": [
                 {
-                    "platform": "state",
+                    "trigger": "state",
                     "entity_id": motion,
                     "to": "on",
                 }
             ],
-            "action": [
-                _service("light.turn_on", light),
+            "actions": [
+                _action("light.turn_on", light),
                 {"delay": {"minutes": minutes}},
-                _service("light.turn_off", light),
+                _action("light.turn_off", light),
             ],
             "mode": "restart",
         }
@@ -75,23 +75,25 @@ def schedule(
         {
             "id": f"{base}_on",
             "alias": on_alias,
-            "trigger": [{"platform": "time", "at": on_at}],
-            "action": [_service(f"{verb_domain}.turn_on", entity)],
+            "triggers": [{"trigger": "time", "at": on_at}],
+            "actions": [_action(f"{verb_domain}.turn_on", entity)],
             "mode": "single",
         },
         {
             "id": f"{base}_off",
             "alias": off_alias,
-            "trigger": [{"platform": "time", "at": off_at}],
-            "action": [_service(f"{verb_domain}.turn_off", entity)],
+            "triggers": [{"trigger": "time", "at": off_at}],
+            "actions": [_action(f"{verb_domain}.turn_off", entity)],
             "mode": "single",
         },
     ]
 
 
-def _service(service: str, entity: str) -> dict:
+def _action(action: str, entity: str) -> dict:
+    # HA 2024.10 renamed platform/service to trigger/action. The old keys
+    # still load, but the UI and docs only show the new ones.
     return {
-        "service": service,
+        "action": action,
         "target": {"entity_id": entity},
     }
 

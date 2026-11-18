@@ -65,7 +65,7 @@ def test_template_motion_light_stdout(capsys):
     out = capsys.readouterr().out
     data = yaml.safe_load(out)
     assert check_data(data) == []
-    assert data[0]["action"][1]["delay"]["minutes"] == 5
+    assert data[0]["actions"][1]["delay"]["minutes"] == 5
 
 
 def test_template_schedule_stdout(capsys):

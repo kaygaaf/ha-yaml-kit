@@ -31,7 +31,7 @@ automations.yaml: item 3: duplicate id 'porch_on'
 
 HA will make up an id and an alias if you leave them out. This check still asks for both. Automations with no name are a pain to find later.
 
-`trigger` or `triggers` both work. Same for `action` and `actions`. One mapping is fine. A list is fine. An empty list (`[]`) is fine. A blank file still has to be a list. Don't put `trigger` and `triggers` on the same automation.
+`trigger` or `triggers` both work. Same for `action` and `actions`. One mapping is fine. A list is fine. An empty one (`[]` or `{}`) gets flagged. A blank file still has to be a list. Don't put `trigger` and `triggers` on the same automation.
 
 It also warns about two YAML 1.1 things. HA still parses YAML the old way.
 
@@ -43,6 +43,8 @@ If you set `mode`, use `single`, `restart`, `queued`, or `parallel`.
 ## Templates
 
 These print YAML. Paste the blocks into `automations.yaml`.
+
+The output uses the syntax HA has used since 2024.10: `triggers` and `actions` at the top, `trigger:` and `action:` on each item. Older installs want `platform:` and `service:` there instead.
 
 Motion turns a light on, then off after a few minutes. `mode` is `restart`, so a new trigger starts the timer over.
 
@@ -56,17 +58,17 @@ ha-yaml-kit template motion-light \
 ```yaml
 - id: hall_motion
   alias: Hall motion light
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.hall_motion
       to: "on"
-  action:
-    - service: light.turn_on
+  actions:
+    - action: light.turn_on
       target:
         entity_id: light.hall
     - delay:
         minutes: 5
-    - service: light.turn_off
+    - action: light.turn_off
       target:
         entity_id: light.hall
   mode: restart
@@ -86,21 +88,21 @@ ha-yaml-kit template schedule \
 ```yaml
 - id: porch_on
   alias: Porch on
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "18:00:00"
-  action:
-    - service: switch.turn_on
+  actions:
+    - action: switch.turn_on
       target:
         entity_id: switch.porch
   mode: single
 - id: porch_off
   alias: Porch off
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "23:00:00"
-  action:
-    - service: switch.turn_off
+  actions:
+    - action: switch.turn_off
       target:
         entity_id: switch.porch
   mode: single

@@ -12,17 +12,18 @@ def test_motion_light_shape_and_check():
     assert auto["id"] == "hall_motion"
     assert auto["alias"] == "Hall motion light"
     assert auto["mode"] == "restart"
-    assert auto["trigger"][0]["to"] == "on"
-    assert auto["action"][1] == {"delay": {"minutes": 5}}
-    assert auto["action"][0]["service"] == "light.turn_on"
-    assert auto["action"][2]["service"] == "light.turn_off"
+    assert auto["triggers"][0]["to"] == "on"
+    assert auto["actions"][1] == {"delay": {"minutes": 5}}
+    assert auto["actions"][0]["action"] == "light.turn_on"
+    assert auto["actions"][2]["action"] == "light.turn_off"
 
     text = dump(data)
-    assert "trigger:\n    - platform: state\n" in text
+    assert "triggers:\n    - trigger: state\n" in text
+    assert "service:" not in text and "platform:" not in text
     assert 'to: "on"' in text
     assert "&" not in text
     loaded = yaml.safe_load(text)
-    assert loaded[0]["trigger"][0]["to"] == "on"
+    assert loaded[0]["triggers"][0]["to"] == "on"
 
 
 def test_motion_light_custom_names():
@@ -35,7 +36,7 @@ def test_motion_light_custom_names():
     )
     assert data[0]["id"] == "kitchen-night"
     assert data[0]["alias"] == "Kitchen at night"
-    assert data[0]["action"][1]["delay"]["minutes"] == 12
+    assert data[0]["actions"][1]["delay"]["minutes"] == 12
 
 
 def test_motion_light_rejects_bad_input():
@@ -53,17 +54,17 @@ def test_schedule_two_automations():
     data = schedule(entity="switch.porch", on="18:00", off="23:30:00")
     assert check_data(data) == []
     assert [item["id"] for item in data] == ["porch_on", "porch_off"]
-    assert data[0]["trigger"][0]["at"] == "18:00:00"
-    assert data[1]["trigger"][0]["at"] == "23:30:00"
-    assert data[0]["action"][0]["service"] == "switch.turn_on"
-    assert data[1]["action"][0]["service"] == "switch.turn_off"
+    assert data[0]["triggers"][0]["at"] == "18:00:00"
+    assert data[1]["triggers"][0]["at"] == "23:30:00"
+    assert data[0]["actions"][0]["action"] == "switch.turn_on"
+    assert data[1]["actions"][0]["action"] == "switch.turn_off"
     assert data[0]["alias"] == "Porch on"
     assert data[1]["alias"] == "Porch off"
 
     text = dump(data)
     assert 'at: "18:00:00"' in text
     loaded = yaml.safe_load(text)
-    assert loaded[0]["trigger"][0]["at"] == "18:00:00"
+    assert loaded[0]["triggers"][0]["at"] == "18:00:00"
 
 
 def test_schedule_other_domain_and_alias():
@@ -76,8 +77,8 @@ def test_schedule_other_domain_and_alias():
     )
     assert data[0]["id"] == "den_on"
     assert data[0]["alias"] == "Den speaker on"
-    assert data[0]["action"][0]["service"] == "homeassistant.turn_on"
-    assert data[0]["trigger"][0]["at"] == "07:05:00"
+    assert data[0]["actions"][0]["action"] == "homeassistant.turn_on"
+    assert data[0]["triggers"][0]["at"] == "07:05:00"
 
 
 def test_schedule_rejects_same_time():

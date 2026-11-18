@@ -20,6 +20,8 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/kaygaaf/ha-yaml-kit"
+Issues = "https://github.com/kaygaaf/ha-yaml-kit/issues"
+Funding = "https://ko-fi.com/kayorama"
 
 [project.scripts]
 ha-yaml-kit = "ha_yaml_kit.cli:main"
